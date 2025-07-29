@@ -4,13 +4,13 @@ A TypeScript library for load balancing calls across multiple LLM APIs with supp
 
 ## Features
 
-- 🔄 **Multiple Load Balancing Strategies**: Round-robin, failover, weighted, and custom strategies
-- 🚀 **Multi-Provider Support**: OpenAI, Claude, Gemini, Cohere, Mistral, and extensible for custom providers
-- 📊 **Built-in Statistics**: Track performance, success rates, and health metrics
-- 🛡️ **Error Handling & Retries**: Automatic retries with exponential backoff
-- ⚡ **Health Checks**: Monitor provider health and automatic failover
-- 🔧 **Dynamic Provider Management**: Add/remove providers at runtime
-- 💪 **TypeScript Support**: Full type safety and IntelliSense support
+- **Multiple Load Balancing Strategies**: Round-robin, failover, weighted, and custom strategies
+- **Multi-Provider Support**: OpenAI, Claude, Gemini, Cohere, Mistral, and extensible for custom providers
+- **Built-in Statistics**: Track performance, success rates, and health metrics
+- **Error Handling & Retries**: Automatic retries with exponential backoff
+- **Health Checks**: Monitor provider health and automatic failover
+- **Dynamic Provider Management**: Add/remove providers at runtime
+- **TypeScript Support**: Full type safety and IntelliSense support
 
 ## Installation
 
@@ -241,21 +241,3 @@ See the `examples/` directory for complete working examples:
 - Error handling
 - Health monitoring
 - Custom providers
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-- 📝 [Documentation](https://github.com/aprameyakannan/llmLoadBalancer#readme)
-- 🐛 [Issue Tracker](https://github.com/aprameyakannan/llmLoadBalancer/issues)
-- 💬 [Discussions](https://github.com/aprameyakannan/llmLoadBalancer/discussions)
