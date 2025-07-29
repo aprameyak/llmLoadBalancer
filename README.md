@@ -15,13 +15,13 @@ A TypeScript library for load balancing calls across multiple LLM APIs with supp
 ## Installation
 
 ```bash
-npm install llm-load-balancer
+npm install @aprameyakannan/llm-load-balancer
 ```
 
 ## Quick Start
 
 ```typescript
-import { createLLMBalancer } from 'llm-load-balancer';
+import { createLLMBalancer } from '@aprameyakannan/llm-load-balancer';
 
 const llm = createLLMBalancer({
   strategy: 'round-robin',
