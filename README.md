@@ -5,7 +5,7 @@ A TypeScript library for load balancing calls across multiple LLM APIs with supp
 ## Features
 
 - **Multiple Load Balancing Strategies**: Round-robin, failover, weighted, and custom strategies
-- **Multi-Provider Support**: OpenAI, Claude, Gemini, Cohere, Mistral, and extensible for custom providers
+- **Multi-Provider Support**: OpenAI, Claude, Gemini, Cohere, Mistral, Perplexity, Ollama, Together, Groq, and extensible for custom providers
 - **Built-in Statistics**: Track performance, success rates, and health metrics
 - **Error Handling & Retries**: Automatic retries with exponential backoff
 - **Health Checks**: Monitor provider health and automatic failover
@@ -20,15 +20,43 @@ npm install @aprameyakannan/llm-load-balancer
 
 ## Quick Start
 
+### API 1: Single Model Request
+```typescript
+import { singleModelRequest } from '@aprameyakannan/llm-load-balancer';
+
+// Simple single provider call
+const response = await singleModelRequest('openai', {
+  prompt: 'Write a funny dad joke.',
+  maxTokens: 100,
+});
+
+console.log(response.content);
+```
+
+### API 2: Load Balancing with Auto-Configuration
+```typescript
+import { createAutoBalancer } from '@aprameyakannan/llm-load-balancer';
+
+// Auto-configure from environment variables
+const llm = createAutoBalancer('round-robin');
+
+const response = await llm.request({
+  prompt: 'Write a funny dad joke.',
+});
+
+console.log(response.content);
+```
+
+### API 3: Manual Configuration
 ```typescript
 import { createLLMBalancer } from '@aprameyakannan/llm-load-balancer';
 
 const llm = createLLMBalancer({
   strategy: 'round-robin',
   providers: [
-    { name: 'openai', apiKey: 'your-openai-key', model: 'gpt-3.5-turbo' },
-    { name: 'claude', apiKey: 'your-claude-key', model: 'claude-3-haiku' },
-    { name: 'gemini', apiKey: 'your-gemini-key', model: 'gemini-pro' },
+    { name: 'openai', apiKey: process.env.OPENAI_API_KEY!, model: 'gpt-3.5-turbo' },
+    { name: 'claude', apiKey: process.env.CLAUDE_API_KEY!, model: 'claude-3-haiku' },
+    { name: 'gemini', apiKey: process.env.GEMINI_API_KEY!, model: 'gemini-pro' },
   ],
 });
 
@@ -68,9 +96,9 @@ Distributes requests based on provider weights.
 const llm = createLLMBalancer({
   strategy: 'weighted',
   providers: [
-    { name: 'openai', apiKey: '...', model: 'gpt-4', weight: 3 },
-    { name: 'claude', apiKey: '...', model: 'claude-3-haiku', weight: 2 },
-    { name: 'gemini', apiKey: '...', model: 'gemini-pro', weight: 1 },
+    { name: 'openai', apiKey: process.env.OPENAI_API_KEY!, model: 'gpt-4', weight: 3 },
+    { name: 'claude', apiKey: process.env.CLAUDE_API_KEY!, model: 'claude-3-haiku', weight: 2 },
+    { name: 'gemini', apiKey: process.env.GEMINI_API_KEY!, model: 'gemini-pro', weight: 1 },
   ],
 });
 ```
@@ -162,7 +190,7 @@ const healthyProviders = llm.getHealthyProviders();
 ```typescript
 llm.addProvider({
   name: 'cohere',
-  apiKey: 'your-cohere-key',
+  apiKey: process.env.COHERE_API_KEY!,
   model: 'command',
   weight: 2
 });
@@ -182,6 +210,10 @@ llm.removeProvider('claude');
 | Gemini | gemini-pro, gemini-pro-vision | Google AI API |
 | Cohere | command, command-light | Generate API |
 | Mistral | mistral-tiny, mistral-small, etc. | Chat completions API |
+| Perplexity | pplx-7b-online, pplx-70b-online, etc. | Real-time search API |
+| Ollama | llama2, codellama, mistral, etc. | Local/self-hosted models |
+| Together | llama-2-70b, codellama-34b, etc. | Open source model hosting |
+| Groq | llama2-70b-4096, mixtral-8x7b-32768, etc. | Ultra-fast inference |
 
 ## Error Handling
 
@@ -220,16 +252,37 @@ class CustomProvider extends BaseProvider {
 }
 ```
 
-### Environment Variables
-For production use, store API keys in environment variables:
+## Environment Variables
+
+The package automatically reads from environment variables. Set up your API keys:
+
+```bash
+# Required for single model requests
+OPENAI_API_KEY=sk-...
+CLAUDE_API_KEY=sk-ant-...
+GEMINI_API_KEY=AIza...
+PERPLEXITY_API_KEY=pplx-...
+GROQ_API_KEY=gsk_...
+COHERE_API_KEY=...
+MISTRAL_API_KEY=...
+TOGETHER_API_KEY=...
+
+# Optional for local Ollama
+OLLAMA_MODEL=llama2
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+### Auto-Configuration
+The `createAutoBalancer()` function automatically detects available API keys and creates providers:
 
 ```typescript
-const llm = createLLMBalancer({
-  strategy: 'round-robin',
-  providers: [
-    { name: 'openai', apiKey: process.env.OPENAI_API_KEY!, model: 'gpt-3.5-turbo' },
-    { name: 'claude', apiKey: process.env.CLAUDE_API_KEY!, model: 'claude-3-haiku' },
-  ],
+// Will use all available API keys from environment
+const llm = createAutoBalancer('round-robin');
+
+// Custom strategy with auto-configuration
+const llm = createAutoBalancer('custom', (providers) => {
+  // Prefer faster providers
+  return providers.find(p => p.name === 'groq') || providers[0];
 });
 ```
 

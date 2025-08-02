@@ -219,6 +219,158 @@ export class MistralProvider extends BaseProvider {
   }
 }
 
+export class PerplexityProvider extends BaseProvider {
+  async makeRequest(request: LLMRequest): Promise<LLMResponse> {
+    try {
+      const response: AxiosResponse = await this.client.post(
+        'https://api.perplexity.ai/chat/completions',
+        {
+          model: this.config.model,
+          messages: [{ role: 'user', content: request.prompt }],
+          max_tokens: request.maxTokens,
+          temperature: request.temperature,
+          top_p: request.topP,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${this.config.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const choice = response.data.choices[0];
+      return {
+        content: choice.message.content,
+        usage: {
+          promptTokens: response.data.usage?.prompt_tokens || 0,
+          completionTokens: response.data.usage?.completion_tokens || 0,
+          totalTokens: response.data.usage?.total_tokens || 0,
+        },
+        model: this.config.model,
+        provider: this.config.name,
+        finishReason: choice.finish_reason,
+      };
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+}
+
+export class OllamaProvider extends BaseProvider {
+  async makeRequest(request: LLMRequest): Promise<LLMResponse> {
+    try {
+      const response: AxiosResponse = await this.client.post(
+        `${this.config.baseUrl || 'http://localhost:11434'}/api/generate`,
+        {
+          model: this.config.model,
+          prompt: request.prompt,
+          options: {
+            num_predict: request.maxTokens,
+            temperature: request.temperature,
+            top_p: request.topP,
+          },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      return {
+        content: response.data.response,
+        usage: {
+          promptTokens: response.data.prompt_eval_count || 0,
+          completionTokens: response.data.eval_count || 0,
+          totalTokens: (response.data.prompt_eval_count || 0) + (response.data.eval_count || 0),
+        },
+        model: this.config.model,
+        provider: this.config.name,
+        finishReason: response.data.done ? 'stop' : 'length',
+      };
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+}
+
+export class TogetherProvider extends BaseProvider {
+  async makeRequest(request: LLMRequest): Promise<LLMResponse> {
+    try {
+      const response: AxiosResponse = await this.client.post(
+        'https://api.together.xyz/v1/chat/completions',
+        {
+          model: this.config.model,
+          messages: [{ role: 'user', content: request.prompt }],
+          max_tokens: request.maxTokens,
+          temperature: request.temperature,
+          top_p: request.topP,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${this.config.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const choice = response.data.choices[0];
+      return {
+        content: choice.message.content,
+        usage: {
+          promptTokens: response.data.usage.prompt_tokens,
+          completionTokens: response.data.usage.completion_tokens,
+          totalTokens: response.data.usage.total_tokens,
+        },
+        model: this.config.model,
+        provider: this.config.name,
+        finishReason: choice.finish_reason,
+      };
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+}
+
+export class GroqProvider extends BaseProvider {
+  async makeRequest(request: LLMRequest): Promise<LLMResponse> {
+    try {
+      const response: AxiosResponse = await this.client.post(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
+          model: this.config.model,
+          messages: [{ role: 'user', content: request.prompt }],
+          max_tokens: request.maxTokens,
+          temperature: request.temperature,
+          top_p: request.topP,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${this.config.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const choice = response.data.choices[0];
+      return {
+        content: choice.message.content,
+        usage: {
+          promptTokens: response.data.usage.prompt_tokens,
+          completionTokens: response.data.usage.completion_tokens,
+          totalTokens: response.data.usage.total_tokens,
+        },
+        model: this.config.model,
+        provider: this.config.name,
+        finishReason: choice.finish_reason,
+      };
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+}
+
 export function createProvider(config: ProviderConfig): BaseProvider {
   switch (config.name.toLowerCase()) {
     case 'openai':
@@ -231,6 +383,14 @@ export function createProvider(config: ProviderConfig): BaseProvider {
       return new CohereProvider(config);
     case 'mistral':
       return new MistralProvider(config);
+    case 'perplexity':
+      return new PerplexityProvider(config);
+    case 'ollama':
+      return new OllamaProvider(config);
+    case 'together':
+      return new TogetherProvider(config);
+    case 'groq':
+      return new GroqProvider(config);
     default:
       throw new Error(`Unsupported provider: ${config.name}`);
   }

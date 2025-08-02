@@ -4,9 +4,11 @@ async function basicExample() {
   const llm = createLLMBalancer({
     strategy: 'round-robin',
     providers: [
-      { name: 'openai', apiKey: process.env.OPENAI_API_KEY || 'your-key-here', model: 'gpt-3.5-turbo' },
-      { name: 'claude', apiKey: process.env.CLAUDE_API_KEY || 'your-key-here', model: 'claude-3-haiku' },
-      { name: 'gemini', apiKey: process.env.GEMINI_API_KEY || 'your-key-here', model: 'gemini-pro' },
+      { name: 'openai', apiKey: process.env.OPENAI_API_KEY!, model: 'gpt-3.5-turbo' },
+      { name: 'claude', apiKey: process.env.CLAUDE_API_KEY!, model: 'claude-3-haiku' },
+      { name: 'gemini', apiKey: process.env.GEMINI_API_KEY!, model: 'gemini-pro' },
+      { name: 'perplexity', apiKey: process.env.PERPLEXITY_API_KEY!, model: 'pplx-7b-online' },
+      { name: 'groq', apiKey: process.env.GROQ_API_KEY!, model: 'llama2-70b-4096' },
     ],
   });
 

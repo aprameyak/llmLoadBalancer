@@ -19,7 +19,7 @@ export interface LLMResponse {
 }
 
 export interface ProviderConfig {
-  name: 'openai' | 'claude' | 'gemini' | 'cohere' | 'mistral' | string;
+  name: 'openai' | 'claude' | 'gemini' | 'cohere' | 'mistral' | 'perplexity' | 'ollama' | 'together' | 'groq' | string;
   apiKey: string;
   model: string;
   baseUrl?: string;

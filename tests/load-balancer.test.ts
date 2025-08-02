@@ -13,6 +13,8 @@ describe('LLMLoadBalancer', () => {
     { name: 'openai', apiKey: 'test-key-1', model: 'gpt-3.5-turbo' },
     { name: 'claude', apiKey: 'test-key-2', model: 'claude-3-haiku' },
     { name: 'gemini', apiKey: 'test-key-3', model: 'gemini-pro' },
+    { name: 'perplexity', apiKey: 'test-key-4', model: 'pplx-7b-online' },
+    { name: 'groq', apiKey: 'test-key-5', model: 'llama2-70b-4096' },
   ];
 
   beforeEach(() => {
@@ -207,7 +209,7 @@ describe('LLMLoadBalancer', () => {
       });
 
       const healthyProviders = balancer.getHealthyProviders();
-      expect(healthyProviders).toHaveLength(3);
+      expect(healthyProviders).toHaveLength(5);
     });
   });
 

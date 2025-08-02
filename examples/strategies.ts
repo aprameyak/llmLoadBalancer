@@ -1,9 +1,11 @@
 import { createLLMBalancer, ProviderConfig } from '../src';
 
 const providers: ProviderConfig[] = [
-  { name: 'openai', apiKey: process.env.OPENAI_API_KEY || 'demo-key', model: 'gpt-3.5-turbo', weight: 3 },
-  { name: 'claude', apiKey: process.env.CLAUDE_API_KEY || 'demo-key', model: 'claude-3-haiku', weight: 2 },
-  { name: 'gemini', apiKey: process.env.GEMINI_API_KEY || 'demo-key', model: 'gemini-pro', weight: 1 },
+  { name: 'openai', apiKey: process.env.OPENAI_API_KEY!, model: 'gpt-3.5-turbo', weight: 3 },
+  { name: 'claude', apiKey: process.env.CLAUDE_API_KEY!, model: 'claude-3-haiku', weight: 2 },
+  { name: 'gemini', apiKey: process.env.GEMINI_API_KEY!, model: 'gemini-pro', weight: 1 },
+  { name: 'perplexity', apiKey: process.env.PERPLEXITY_API_KEY!, model: 'pplx-7b-online', weight: 2 },
+  { name: 'groq', apiKey: process.env.GROQ_API_KEY!, model: 'llama2-70b-4096', weight: 1 },
 ];
 
 async function demonstrateStrategies() {
