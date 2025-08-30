@@ -47,7 +47,6 @@ export function createAutoBalancer(
 ): LLMLoadBalancer {
   const providers: ProviderConfig[] = [];
   
-  // Check for each provider's API key and add if available
   const providerConfigs = [
     { name: 'openai', envKey: 'OPENAI_API_KEY', defaultModel: 'gpt-3.5-turbo' },
     { name: 'claude', envKey: 'CLAUDE_API_KEY', defaultModel: 'claude-3-haiku' },
@@ -59,25 +58,21 @@ export function createAutoBalancer(
     { name: 'together', envKey: 'TOGETHER_API_KEY', defaultModel: 'llama-2-70b' },
   ];
 
+  // Add providers with API keys
   for (const config of providerConfigs) {
     const apiKey = process.env[config.envKey];
     if (apiKey) {
-      providers.push({
-        name: config.name as any,
-        apiKey,
-        model: config.defaultModel,
-      });
+      providers.push({ name: config.name as any, apiKey, model: config.defaultModel });
     }
   }
 
-  // Special handling for Ollama (local, no API key needed)
-  const ollamaUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
+  // Add Ollama if configured
   if (process.env.OLLAMA_MODEL) {
     providers.push({
       name: 'ollama',
-      apiKey: '', // No API key for local Ollama
+      apiKey: '',
       model: process.env.OLLAMA_MODEL,
-      baseUrl: ollamaUrl,
+      baseUrl: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
     });
   }
 
@@ -85,26 +80,23 @@ export function createAutoBalancer(
     throw new Error('No provider API keys found in environment variables');
   }
 
-  return createLLMBalancer({
-    strategy,
-    providers,
-    customStrategy,
-  });
+  return createLLMBalancer({ strategy, providers, customStrategy });
 }
 
+const defaultModels: Record<string, string> = {
+  openai: 'gpt-3.5-turbo',
+  claude: 'claude-3-haiku',
+  gemini: 'gemini-pro',
+  cohere: 'command',
+  mistral: 'mistral-small',
+  perplexity: 'pplx-7b-online',
+  groq: 'llama2-70b-4096',
+  together: 'llama-2-70b',
+  ollama: 'llama2',
+};
+
 function getDefaultModel(provider: string): string {
-  const defaults: Record<string, string> = {
-    openai: 'gpt-3.5-turbo',
-    claude: 'claude-3-haiku',
-    gemini: 'gemini-pro',
-    cohere: 'command',
-    mistral: 'mistral-small',
-    perplexity: 'pplx-7b-online',
-    groq: 'llama2-70b-4096',
-    together: 'llama-2-70b',
-    ollama: 'llama2',
-  };
-  return defaults[provider] || 'gpt-3.5-turbo';
+  return defaultModels[provider] || 'gpt-3.5-turbo';
 }
 
 // Export all types and classes for advanced usage

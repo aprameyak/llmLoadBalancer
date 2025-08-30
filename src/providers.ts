@@ -371,27 +371,22 @@ export class GroqProvider extends BaseProvider {
   }
 }
 
+const providerMap: Record<string, new (config: ProviderConfig) => BaseProvider> = {
+  openai: OpenAIProvider,
+  claude: ClaudeProvider,
+  gemini: GeminiProvider,
+  cohere: CohereProvider,
+  mistral: MistralProvider,
+  perplexity: PerplexityProvider,
+  ollama: OllamaProvider,
+  together: TogetherProvider,
+  groq: GroqProvider,
+};
+
 export function createProvider(config: ProviderConfig): BaseProvider {
-  switch (config.name.toLowerCase()) {
-    case 'openai':
-      return new OpenAIProvider(config);
-    case 'claude':
-      return new ClaudeProvider(config);
-    case 'gemini':
-      return new GeminiProvider(config);
-    case 'cohere':
-      return new CohereProvider(config);
-    case 'mistral':
-      return new MistralProvider(config);
-    case 'perplexity':
-      return new PerplexityProvider(config);
-    case 'ollama':
-      return new OllamaProvider(config);
-    case 'together':
-      return new TogetherProvider(config);
-    case 'groq':
-      return new GroqProvider(config);
-    default:
-      throw new Error(`Unsupported provider: ${config.name}`);
+  const ProviderClass = providerMap[config.name.toLowerCase()];
+  if (!ProviderClass) {
+    throw new Error(`Unsupported provider: ${config.name}`);
   }
+  return new ProviderClass(config);
 }
