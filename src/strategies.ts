@@ -87,24 +87,26 @@ export class CustomStrategy implements LoadBalancingStrategy {
   }
 }
 
+const strategyMap: Record<string, (providers: ProviderConfig[], customStrategy?: (providers: ProviderConfig[]) => ProviderConfig) => LoadBalancingStrategy> = {
+  'round-robin': () => new RoundRobinStrategy(),
+  'failover': () => new FailoverStrategy(),
+  'weighted': (providers) => new WeightedStrategy(providers),
+  'custom': (providers, customStrategy) => {
+    if (!customStrategy) {
+      throw new Error('Custom strategy function is required for custom strategy type');
+    }
+    return new CustomStrategy(customStrategy);
+  },
+};
+
 export function createStrategy(
   strategyType: string,
   providers: ProviderConfig[],
   customStrategy?: (providers: ProviderConfig[]) => ProviderConfig
 ): LoadBalancingStrategy {
-  switch (strategyType) {
-    case 'round-robin':
-      return new RoundRobinStrategy();
-    case 'failover':
-      return new FailoverStrategy();
-    case 'weighted':
-      return new WeightedStrategy(providers);
-    case 'custom':
-      if (!customStrategy) {
-        throw new Error('Custom strategy function is required for custom strategy type');
-      }
-      return new CustomStrategy(customStrategy);
-    default:
-      throw new Error(`Unsupported strategy: ${strategyType}`);
+  const strategyFactory = strategyMap[strategyType];
+  if (!strategyFactory) {
+    throw new Error(`Unsupported strategy: ${strategyType}`);
   }
+  return strategyFactory(providers, customStrategy);
 }
