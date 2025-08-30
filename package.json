@@ -1,6 +1,6 @@
 {
   "name": "@aprameyak/llm-load-balancer",
-  "version": "1.4.0",
+  "version": "1.6.0",
   "description": "A TypeScript library for load balancing calls across multiple LLM APIs with support for various routing strategies",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,12 +28,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aprameyakannan/llmLoadBalancer.git"
+    "url": "git+https://github.com/aprameyak/llmLoadBalancer.git"
   },
   "bugs": {
-    "url": "https://github.com/aprameyakannan/llmLoadBalancer/issues"
+    "url": "https://github.com/aprameyak/llmLoadBalancer/issues"
   },
-  "homepage": "https://github.com/aprameyakannan/llmLoadBalancer#readme",
+  "homepage": "https://github.com/aprameyak/llmLoadBalancer#readme",
   "devDependencies": {
     "@types/node": "^20.6.0",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
