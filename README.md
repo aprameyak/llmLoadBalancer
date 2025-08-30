@@ -21,8 +21,9 @@ npm install @aprameyakannan/llm-load-balancer
 ## Quick Start
 
 ### API 1: Single Model Request
+
 ```typescript
-import { singleModelRequest } from '@aprameyakannan/llm-load-balancer';
+import { singleModelRequest } from '@aprameyak/llm-load-balancer';
 
 // Simple single provider call
 const response = await singleModelRequest('openai', {
@@ -34,8 +35,9 @@ console.log(response.content);
 ```
 
 ### API 2: Load Balancing with Auto-Configuration
+
 ```typescript
-import { createAutoBalancer } from '@aprameyakannan/llm-load-balancer';
+import { createAutoBalancer } from '@aprameyak/llm-load-balancer';
 
 // Auto-configure from environment variables
 const llm = createAutoBalancer('round-robin');
@@ -48,8 +50,9 @@ console.log(response.content);
 ```
 
 ### API 3: Manual Configuration
+
 ```typescript
-import { createLLMBalancer } from '@aprameyakannan/llm-load-balancer';
+import { createLLMBalancer } from '@aprameyak/llm-load-balancer';
 
 const llm = createLLMBalancer({
   strategy: 'round-robin',
@@ -70,6 +73,7 @@ console.log(response.content);
 ## Load Balancing Strategies
 
 ### Round Robin
+
 Distributes requests evenly across all providers in sequence.
 
 ```typescript
@@ -80,6 +84,7 @@ const llm = createLLMBalancer({
 ```
 
 ### Failover
+
 Uses the first healthy provider, falling back to others if needed.
 
 ```typescript
@@ -90,6 +95,7 @@ const llm = createLLMBalancer({
 ```
 
 ### Weighted
+
 Distributes requests based on provider weights.
 
 ```typescript
@@ -104,6 +110,7 @@ const llm = createLLMBalancer({
 ```
 
 ### Custom Strategy
+
 Use your own load balancing logic.
 
 ```typescript
@@ -220,7 +227,7 @@ llm.removeProvider('claude');
 The library provides comprehensive error handling with custom error types:
 
 ```typescript
-import { LLMError, LoadBalancerError } from 'llm-load-balancer';
+import { LLMError, LoadBalancerError } from '@aprameyak/llm-load-balancer';
 
 try {
   const response = await llm.request({ prompt: 'Hello' });
@@ -237,7 +244,7 @@ try {
 
 ### Custom Provider Implementation
 ```typescript
-import { BaseProvider, LLMRequest, LLMResponse } from 'llm-load-balancer';
+import { BaseProvider, LLMRequest, LLMResponse } from '@aprameyak/llm-load-balancer';
 
 class CustomProvider extends BaseProvider {
   async makeRequest(request: LLMRequest): Promise<LLMResponse> {
