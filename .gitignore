@@ -62,3 +62,6 @@ Thumbs.db
 # Temporary folders
 tmp/
 temp/
+
+# NPM configuration (if contains tokens)
+.npmrc

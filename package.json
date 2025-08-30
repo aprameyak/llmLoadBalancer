@@ -1,5 +1,5 @@
 {
-  "name": "@aprameyakannan/llm-load-balancer",
+  "name": "@aprameyak/llm-load-balancer",
   "version": "1.2.0",
   "description": "A TypeScript library for load balancing calls across multiple LLM APIs with support for various routing strategies",
   "main": "dist/index.js",
@@ -14,8 +14,7 @@
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint"
+    "prepare": "npm run build"
   },
   "keywords": [
     "llm",
@@ -52,5 +51,8 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
