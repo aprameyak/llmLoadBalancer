@@ -1,6 +1,6 @@
 {
   "name": "@aprameyak/llm-load-balancer",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A TypeScript library for load balancing calls across multiple LLM APIs with support for various routing strategies",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
