@@ -62,7 +62,7 @@ export function createAutoBalancer(
   for (const config of providerConfigs) {
     const apiKey = process.env[config.envKey];
     if (apiKey) {
-      providers.push({ name: config.name as any, apiKey, model: config.defaultModel });
+      providers.push({ name: config.name as keyof typeof defaultModels, apiKey, model: config.defaultModel });
     }
   }
 
