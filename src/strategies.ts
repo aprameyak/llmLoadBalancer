@@ -7,7 +7,7 @@ export interface LoadBalancingStrategy {
 export class RoundRobinStrategy implements LoadBalancingStrategy {
   private currentIndex = 0;
 
-  selectProvider(providers: ProviderConfig[]): ProviderConfig {
+  selectProvider(providers: ProviderConfig[], stats: { [key: string]: ProviderStats }): ProviderConfig {
     if (providers.length === 0) {
       throw new Error('No providers available');
     }
@@ -56,7 +56,7 @@ export class WeightedStrategy implements LoadBalancingStrategy {
     }
   }
 
-  selectProvider(providers: ProviderConfig[]): ProviderConfig {
+  selectProvider(providers: ProviderConfig[], stats: { [key: string]: ProviderStats }): ProviderConfig {
     if (providers.length === 0) {
       throw new Error('No providers available');
     }
@@ -82,7 +82,7 @@ export class WeightedStrategy implements LoadBalancingStrategy {
 export class CustomStrategy implements LoadBalancingStrategy {
   constructor(private strategyFunction: (providers: ProviderConfig[]) => ProviderConfig) {}
 
-  selectProvider(providers: ProviderConfig[]): ProviderConfig {
+  selectProvider(providers: ProviderConfig[], stats: { [key: string]: ProviderStats }): ProviderConfig {
     return this.strategyFunction(providers);
   }
 }
