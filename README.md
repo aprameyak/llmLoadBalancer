@@ -1,5 +1,10 @@
 # LLM Load Balancer
 
+![npm version](https://img.shields.io/npm/v/@aprameyakannan/llm-load-balancer)
+![npm downloads](https://img.shields.io/npm/dm/@aprameyakannan/llm-load-balancer)
+![license](https://img.shields.io/npm/l/@aprameyakannan/llm-load-balancer)
+![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue)
+
 A TypeScript library for load balancing calls across multiple LLM APIs with support for various routing strategies.
 
 ## Features

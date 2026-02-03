@@ -10,7 +10,6 @@ import {
   LoadBalancerError,
 } from './types';
 
-// Single model API - direct provider call
 export async function singleModelRequest(
   provider: 'openai' | 'claude' | 'gemini' | 'cohere' | 'mistral' | 'perplexity' | 'ollama' | 'together' | 'groq',
   request: LLMRequest,
@@ -28,19 +27,17 @@ export async function singleModelRequest(
   };
 
   const llm = createLLMBalancer({
-    strategy: 'failover', // Single provider, so failover doesn't matter
+    strategy: 'failover',
     providers: [config],
   });
 
   return await llm.request(request);
 }
 
-// Load balancing API with strategy
 export function createLLMBalancer(config: LoadBalancerConfig): LLMLoadBalancer {
   return new LLMLoadBalancer(config);
 }
 
-// Auto-configure from environment variables
 export function createAutoBalancer(
   strategy: 'round-robin' | 'failover' | 'weighted' | 'custom' = 'round-robin',
   customStrategy?: (providers: ProviderConfig[]) => ProviderConfig
@@ -58,7 +55,6 @@ export function createAutoBalancer(
     { name: 'together', envKey: 'TOGETHER_API_KEY', defaultModel: 'llama-2-70b' },
   ];
 
-  // Add providers with API keys
   for (const config of providerConfigs) {
     const apiKey = process.env[config.envKey];
     if (apiKey) {
@@ -66,7 +62,6 @@ export function createAutoBalancer(
     }
   }
 
-  // Add Ollama if configured
   if (process.env.OLLAMA_MODEL) {
     providers.push({
       name: 'ollama',
@@ -99,7 +94,6 @@ function getDefaultModel(provider: string): string {
   return defaultModels[provider] || 'gpt-3.5-turbo';
 }
 
-// Export all types and classes for advanced usage
 export {
   LLMLoadBalancer,
   LoadBalancerConfig,
@@ -112,7 +106,6 @@ export {
   LoadBalancerError,
 };
 
-// Export provider classes for custom implementations
 export {
   BaseProvider,
   OpenAIProvider,
@@ -127,7 +120,6 @@ export {
   createProvider,
 } from './providers';
 
-// Export strategy classes for custom implementations
 export {
   LoadBalancingStrategy,
   RoundRobinStrategy,
