@@ -30,8 +30,7 @@ export class LLMLoadBalancer {
     for (const providerConfig of this.config.providers) {
       const provider = createProvider(providerConfig);
       this.providers.set(providerConfig.name, provider);
-      
-      // Initialize stats
+
       this.stats[providerConfig.name] = {
         totalRequests: 0,
         successfulRequests: 0,
@@ -53,7 +52,7 @@ export class LLMLoadBalancer {
           this.config.providers,
           this.stats
         );
-        
+
         const provider = this.providers.get(selectedProvider.name);
         if (!provider) {
           throw new Error(`Provider ${selectedProvider.name} not found`);
@@ -63,26 +62,23 @@ export class LLMLoadBalancer {
         const response = await this.makeRequestWithTimeout(provider, request, selectedProvider);
         const endTime = Date.now();
 
-        // Update stats on success
         this.updateStats(selectedProvider.name, true, endTime - startTime);
-        
+
         return response;
       } catch (error) {
         const llmError = error instanceof LLMError ? error : new LLMError(
           error instanceof Error ? error.message : 'Unknown error',
           'unknown'
         );
-        
+
         errors.push(llmError);
-        
-        // Update stats on failure
+
         if (llmError.provider !== 'unknown') {
           this.updateStats(llmError.provider, false, 0);
         }
 
-        // If this is the last attempt, don't wait
         if (attempt < maxRetries - 1) {
-          await this.delay(retryDelay * Math.pow(2, attempt)); // Exponential backoff
+          await this.delay(retryDelay * Math.pow(2, attempt));
         }
       }
     }
@@ -99,7 +95,7 @@ export class LLMLoadBalancer {
     config: ProviderConfig
   ): Promise<LLMResponse> {
     const timeout = config.timeout || this.config.globalTimeout || 30000;
-    
+
     return Promise.race([
       provider.makeRequest(request),
       new Promise<never>((_, reject) => {
@@ -119,17 +115,15 @@ export class LLMLoadBalancer {
 
     if (success) {
       stats.successfulRequests++;
-      // Update average response time using incremental mean
       const totalSuccessful = stats.successfulRequests;
-      stats.averageResponseTime = 
+      stats.averageResponseTime =
         (stats.averageResponseTime * (totalSuccessful - 1) + responseTime) / totalSuccessful;
     } else {
       stats.failedRequests++;
     }
 
-    // Update health status based on recent performance
     const recentSuccessRate = stats.successfulRequests / stats.totalRequests;
-    stats.isHealthy = recentSuccessRate > 0.5; // Consider healthy if >50% success rate
+    stats.isHealthy = recentSuccessRate > 0.5;
   }
 
   private delay(ms: number): Promise<void> {
@@ -148,7 +142,7 @@ export class LLMLoadBalancer {
 
   public async healthCheck(): Promise<{ [providerName: string]: boolean }> {
     const healthStatus: { [providerName: string]: boolean } = {};
-    
+
     const healthCheckPromises = this.config.providers.map(async (providerConfig) => {
       try {
         const provider = this.providers.get(providerConfig.name);
@@ -157,13 +151,12 @@ export class LLMLoadBalancer {
           return;
         }
 
-        // Simple health check with a basic request
         await this.makeRequestWithTimeout(
           provider,
           { prompt: 'Health check', maxTokens: 1 },
           { ...providerConfig, timeout: 5000 }
         );
-        
+
         healthStatus[providerConfig.name] = true;
         this.stats[providerConfig.name].isHealthy = true;
       } catch (error) {
@@ -180,7 +173,7 @@ export class LLMLoadBalancer {
     const provider = createProvider(config);
     this.providers.set(config.name, provider);
     this.config.providers.push(config);
-    
+
     this.stats[config.name] = {
       totalRequests: 0,
       successfulRequests: 0,
@@ -189,7 +182,6 @@ export class LLMLoadBalancer {
       isHealthy: true,
     };
 
-    // Recreate strategy if needed
     this.strategy = createStrategy(
       this.config.strategy,
       this.config.providers,
@@ -204,7 +196,6 @@ export class LLMLoadBalancer {
     );
     delete this.stats[providerName];
 
-    // Recreate strategy
     this.strategy = createStrategy(
       this.config.strategy,
       this.config.providers,

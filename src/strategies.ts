@@ -24,7 +24,6 @@ export class FailoverStrategy implements LoadBalancingStrategy {
       throw new Error('No providers available');
     }
 
-    // Find the first healthy provider
     for (const provider of providers) {
       const providerStats = stats[provider.name];
       if (!providerStats || providerStats.isHealthy) {
@@ -32,7 +31,6 @@ export class FailoverStrategy implements LoadBalancingStrategy {
       }
     }
 
-    // If no healthy providers, use the first one
     return providers[0];
   }
 }
@@ -61,26 +59,24 @@ export class WeightedStrategy implements LoadBalancingStrategy {
       throw new Error('No providers available');
     }
 
-    // Recalculate weights if provider list changed
     if (this.cumulativeWeights.length !== providers.length) {
       this.calculateWeights(providers);
     }
 
     const random = Math.random() * this.totalWeight;
-    
+
     for (let i = 0; i < this.cumulativeWeights.length; i++) {
       if (random <= this.cumulativeWeights[i]) {
         return providers[i];
       }
     }
 
-    // Fallback to last provider
     return providers[providers.length - 1];
   }
 }
 
 export class CustomStrategy implements LoadBalancingStrategy {
-  constructor(private strategyFunction: (providers: ProviderConfig[]) => ProviderConfig) {}
+  constructor(private strategyFunction: (providers: ProviderConfig[]) => ProviderConfig) { }
 
   selectProvider(providers: ProviderConfig[]): ProviderConfig {
     return this.strategyFunction(providers);
